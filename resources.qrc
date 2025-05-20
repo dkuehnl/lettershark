@@ -1,0 +1,15 @@
+<RCC>
+    <qresource prefix="/icons">
+        <file>src/images/favicon.ico</file>
+        <file>src/images/LetterShark_logo_kl.png</file>
+        <file>src/images/min.svg</file>
+        <file>src/images/max-2.svg</file>
+        <file>src/images/close-2.svg</file>
+        <file>src/images/check.png</file>
+        <file>src/images/down-arrow.png</file>
+    </qresource>
+
+    <qresource prefix="/style">
+        <file>src/styles/dark_mainwindow.qss</file>
+    </qresource>
+</RCC>

@@ -1,0 +1,143 @@
+QMainWindow, 
+QMainWindow > QWidget /* Haupt-Content-Widget */ {
+    background-color: #1E1E1E;      /* dein Dark+-Hintergrund */
+}
+
+/* Optional: Wenn du möchtest, dass auch alle Dialoge und anderen Fenster
+   automatisch diesen Hintergrund übernehmen, kannst du den Wildcard-Selektor nutzen: */
+* {
+    background-color: #1E1E1E;
+}
+
+/* Track / Background */
+QScrollBar:vertical {
+    background: #252526;              /* Track-Farbe */
+    width: 12px;                      /* Breite der Leiste */
+    margin: 0;                        /* kein zusätzlicher Rand */
+    border: none;
+}
+
+/* Handle / Schieber */
+QScrollBar::handle:vertical {
+    background: #3C3C3C;              /* Standard-Handle */
+    min-height: 30px;                 /* Mindestgröße */
+    border-radius: 4px;               /* Abrundung */
+}
+
+/* Hover- und Pressed-Effekt */
+QScrollBar::handle:vertical:hover {
+    background: #094771;              /* VSCode-Hover-Blau */ 
+}
+QScrollBar::handle:vertical:pressed {
+    background: #007ACC;              /* VSCode-Accent-Blau */ 
+}
+
+/* „Page“-Flächen ober/unterhalb des Handles */
+QScrollBar::add-page:vertical,
+QScrollBar::sub-page:vertical {
+    background: none;                 /* transparent lassen */
+}
+
+/* Arrow-Buttons oben/unten */
+QScrollBar::sub-line:vertical, QScrollBar::add-line:vertical {
+    height: 12px;
+    subcontrol-origin: margin;
+    subcontrol-position: top;         /* bzw. bottom */
+    border: none;
+    background: transparent;
+}
+
+/* Arrow-Icons per Image */
+QScrollBar::sub-line:vertical {
+    image: url(:/icons/arrow_up.svg);
+}
+QScrollBar::add-line:vertical {
+    image: url(:/icons/arrow_down.svg);
+}
+QScrollBar::up-arrow:vertical, QScrollBar::down-arrow:vertical {
+    /* Falls du Border-Arrow-Tricks willst, hier definieren */
+}
+
+/* Grid-/Seiten-Linien (optional) */
+QScrollBar::sub-page:vertical, QScrollBar::add-page:vertical {
+    background: none;
+}
+
+/* Track / Background */
+QScrollBar:horizontal {
+    background: #252526;              /* Track-Farbe */
+    height: 12px;                     /* Höhe der Leiste */
+    margin: 0;                        /* kein zusätzlicher Rand */
+    border: none;
+}
+
+/* Handle / Schieber */
+QScrollBar::handle:horizontal {
+    background: #3C3C3C;              /* Standard-Handle */
+    min-width: 30px;                  /* Mindestgröße */
+    border-radius: 4px;               /* Abrundung */
+}
+
+/* Hover- und Pressed-Effekt */
+QScrollBar::handle:horizontal:hover {
+    background: #094771;              /* VSCode-Hover-Blau */ 
+}
+QScrollBar::handle:horizontal:pressed {
+    background: #007ACC;              /* VSCode-Accent-Blau */ 
+}
+
+/* „Page“-Flächen links/rechts vom Handle */
+QScrollBar::add-page:horizontal,
+QScrollBar::sub-page:horizontal {
+    background: none;                 /* transparent lassen */
+}
+
+/* Arrow-Buttons links/rechts */
+QScrollBar::sub-line:horizontal,
+QScrollBar::add-line:horizontal {
+    width: 12px;
+    subcontrol-origin: margin;
+    subcontrol-position: left;        /* bzw. right */
+    border: none;
+    background: transparent;
+}
+
+/* Arrow-Icons per Image */
+QScrollBar::sub-line:horizontal {
+    image: url(:/icons/arrow_left.svg);
+}
+QScrollBar::add-line:horizontal {
+    image: url(:/icons/arrow_right.svg);
+}
+
+/* (Optional) Border-Trick für eigene Pfeile */
+/*
+QScrollBar::left-arrow:horizontal,
+QScrollBar::right-arrow:horizontal {
+    // hier per Border-Dreieck oder image definieren
+}
+*/
+
+/* Page-Flächen erneut transparent halten */
+QScrollBar::sub-page:horizontal,
+QScrollBar::add-page:horizontal {
+    background: none;
+}
+
+
+QTreeWidget {
+    background-color: rgb(37, 37, 38);  /* Basis-Hintergrund */
+    color: #DDD; 
+    border-color: #3c3c3c;                 /* Standard-Textfarbe */
+}
+
+/* sichtbare Auswahlfarbe */
+QTreeWidget::item:selected {
+    background-color: #2A2D2E;   /* dein Akzent-Dunkelblau */
+    color: #007ACC;              /* kontrastierender Text */
+}
+
+/* optional: Hover-Effekt */
+QTreeWidget::item:hover {
+    background-color: #2A2D2E;   /* leicht aufgehellt beim Überfahren */
+}
