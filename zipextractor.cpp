@@ -12,27 +12,14 @@
 
 std::vector<QString> ZipExtractor::extract_filenames(const QString& folder) {
     std::vector<QString> filenames;
-    if (folder.endsWith(".zip")) {
-        QuaZip zip(folder);
-        zip.open(QuaZip::mdUnzip);
-        QuaZipFileInfo info;
 
-        for (bool more = zip.goToFirstFile(); more; more = zip.goToNextFile()) {
-            zip.getCurrentFileInfo(&info);
-            const QString name = info.name;
-            if (name.endsWith(".gz")) {
-                filenames.push_back(name);
-            }
-        }
-
-        zip.close();
-        return filenames;
-    } else if (folder.endsWith(".tar.gz")) {
+    if (folder.endsWith(".tar.gz")) {
         struct archive* a = archive_read_new();
         archive_read_support_filter_gzip(a);
         archive_read_support_format_tar(a);
 
-        if (archive_read_open_filename(a, folder.toUtf8().constData(), 10240) != ARCHIVE_OK) {
+        std::wstring wpath = folder.toStdWString();
+        if (archive_read_open_filename_w(a, wpath.c_str(), 10240) != ARCHIVE_OK) {
             qDebug() << "Archive konnte nicht gelesen werden";
             archive_read_free(a);
             return {};
@@ -65,7 +52,8 @@ QByteArray ZipExtractor::decomp_folder(const QString& filepath) {
     archive_read_support_format_tar(tar_archive);
 
     auto [tar_gz, log_gz] = ZipExtractor::split_filepath(filepath);
-    if (archive_read_open_filename(tar_archive, tar_gz.toUtf8().constData(), 10240) != ARCHIVE_OK) {
+    std::wstring wpath = tar_gz.toStdWString();
+    if (archive_read_open_filename_w(tar_archive, wpath.c_str(), 10240) != ARCHIVE_OK) {
         QString err = archive_error_string(tar_archive);
         qDebug() << err;
         archive_read_free(tar_archive);

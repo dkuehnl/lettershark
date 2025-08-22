@@ -49,9 +49,6 @@ void FileManager::open_folder() {
     QFileInfoList entries = dir.entryInfoList(QDir::NoDotAndDotDot | QDir::Files);
     for (const QFileInfo& info : entries) {
         FileTabInfo file_info = build_file_tab_info(info.absoluteFilePath(), info.fileName(), QFileInfo(folder_path).fileName());
-        qDebug() << file_info.filename;
-        qDebug() << file_info.filepath;
-        qDebug() << file_info.root_folder;
 
         m_file_mapping.insert(file_info.filename, file_info);
         all_infos.push_back(file_info);
@@ -60,7 +57,7 @@ void FileManager::open_folder() {
 }
 
 void FileManager::open_archive() {
-    QString tar_gz = QFileDialog::getOpenFileName(nullptr, "Open new tar.gz/.zip");
+    QString tar_gz = QFileDialog::getOpenFileName(nullptr, "Open new tar.gz");
     if (tar_gz.isEmpty()) return;
 
     auto archive_names = ZipExtractor::extract_filenames(tar_gz);
