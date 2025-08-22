@@ -2,9 +2,11 @@
 #include "zipextractor.h"
 #include "parser_exceptions.h"
 
-#include <qdebug.h>
+#include <iostream>
 #include <sstream>
-#include <fstream>
+
+#include <QDebug>
+#include <QTextStream>
 #include <QFileInfo>
 #include <QBuffer>
 
@@ -35,14 +37,20 @@ Parser::Parser(QString filepath)
             m_table.push_back(row);
         }
     } else {
-        std::ifstream file(m_filepath.toStdString());
-        if (!file.is_open()) {
+        qDebug() << m_filepath;
+        std::cout << m_filepath.toStdString() << std::endl;
+        std::cout << m_filepath.toUtf8().constData() << std::endl;
+
+        QFile file(m_filepath);
+        if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
             throw unable_to_read_file("File could not be readed.");
         }
 
-        std::string line;
-        while(std::getline(file, line)){
-            TableRow row = parse_line(line);
+        QTextStream in(&file);
+        QString line;
+        while (!in.atEnd()) {
+            line = in.readLine();
+            TableRow row = parse_line(line.toStdString());
             m_table.push_back(row);
         }
     }
