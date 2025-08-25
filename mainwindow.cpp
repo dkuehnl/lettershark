@@ -8,6 +8,8 @@
 #include <QMouseEvent>
 #include <QMenuBar>
 #include <QMessageBox>
+#include <QShortcut>
+#include <QKeySequence>
 
 #include "parser.h"
 #include "parser_exceptions.h"
@@ -45,6 +47,18 @@ MainWindow::MainWindow(QWidget *parent)
     connect(m_context_handler.get(), &ContextMenuHandler::parse_folder_requested, this, &MainWindow::parse_folder);
     connect(m_context_handler.get(), &ContextMenuHandler::unload_requested, this, &MainWindow::unload);
 
+    QShortcut *find_shortcut = new QShortcut(QKeySequence::Find, this);
+    QShortcut *next_shortcut = new QShortcut(QKeySequence::FindNext, this);
+    QShortcut *prev_shortcut = new QShortcut(QKeySequence::FindPrevious, this);
+    connect(find_shortcut, &QShortcut::activated, this, &MainWindow::open_search_window);
+    connect(next_shortcut, &QShortcut::activated, this, &MainWindow::open_next_result);
+    connect(prev_shortcut, &QShortcut::activated, this, &MainWindow::open_prev_result);
+
+    connect(ui->tabWidget, &QTabWidget::currentChanged,
+            this, [this](int index){
+                Q_UNUSED(index);
+                m_last_row = -1;
+            });
 }
 
 void MainWindow::showEvent(QShowEvent* event) {
@@ -122,7 +136,6 @@ void MainWindow::clear_space() {
 }
 
 void MainWindow::unload(QString filename) {
-    qDebug() << filename;
     auto file_entry = m_file_manager->get_entry(filename);
     if (file_entry) {
         FileTabInfo file = file_entry->get();
@@ -349,4 +362,46 @@ void MainWindow::export_specific() {
             ui->lbl_search_results->setText("Something went wrong with the export... :-(");
         }
     };
+}
+
+void MainWindow::open_search_window() {
+    qDebug() << "STRG+F gedrückt";
+}
+
+void MainWindow::open_next_result() {
+    int index = ui->tabWidget->currentIndex();
+
+    QWidget* tab = ui->tabWidget->widget(index);
+    QTableWidget* table = tab->findChild<QTableWidget*>();
+    if (!table) return;
+
+    table->setFocus();
+    int row_count = table->rowCount();
+    for (int r = m_last_row + 1; r < row_count; r++) {
+        QTableWidgetItem* item = table->item(r,0);
+        if (item && (item->background() != Qt::NoBrush)) {
+            table->setCurrentItem(item);
+            table->scrollToItem(item, QAbstractItemView::PositionAtCenter);
+            m_last_row = r;
+            break;
+        }
+    }
+}
+void MainWindow::open_prev_result() {
+    int index = ui->tabWidget->currentIndex();
+
+    QWidget* tab = ui->tabWidget->widget(index);
+    QTableWidget* table = tab->findChild<QTableWidget*>();
+    if (!table) return;
+
+    table->setFocus();
+    for (int r = m_last_row - 1; r >= 0; r--) {
+        QTableWidgetItem* item = table->item(r,0);
+        if (item && (item->background() != Qt::NoBrush)) {
+            table->setCurrentItem(item);
+            table->scrollToItem(item, QAbstractItemView::PositionAtCenter);
+            m_last_row = r;
+            break;
+        }
+    }
 }

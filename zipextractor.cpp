@@ -64,9 +64,7 @@ QByteArray ZipExtractor::decomp_folder(const QString& filepath) {
     struct archive_entry* entry;
     while (archive_read_next_header(tar_archive, &entry) == ARCHIVE_OK) {
         QString entry_name = QString::fromUtf8(archive_entry_pathname(entry));
-        qDebug() << entry_name;
         if (entry_name == log_gz) {
-            qDebug() << "Gefunden";
             QByteArray tar_gz;
             const int CHUNK_SIZE = 8192;
             char buffer[CHUNK_SIZE];

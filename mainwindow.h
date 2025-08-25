@@ -37,6 +37,7 @@ private:
     std::unique_ptr<FileManager> m_file_manager;
     SearchController* m_search_controller;
     std::unique_ptr<ContextMenuHandler> m_context_handler;
+    int m_last_row = -1;
 
     unsigned int m_parsed_files = 0;
     unsigned int m_parsed_lines = 0;
@@ -46,6 +47,9 @@ private:
     void parse_folder(QString folder);
     void unload(QString filename);
     void delete_file(FileTabInfo file);
+    void open_search_window();
+    void open_next_result();
+    void open_prev_result();
 
 private slots:
     void on_btn_search_clicked();
