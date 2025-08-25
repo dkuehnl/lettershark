@@ -20,6 +20,7 @@ public:
 
     SearchController(QTabWidget* tabs, FileManager* file_manager);
     QString search(bool global_search, const QString& search_text, QComboBox* combo);
+    void shortcut_search(QTableWidget* table, const QString& search_text);
     void reset_search_controller();
     void clear();
     bool export_global_results();

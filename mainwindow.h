@@ -50,6 +50,7 @@ private:
     void open_search_window();
     void open_next_result();
     void open_prev_result();
+    void reset_shortcut_search();
 
 private slots:
     void on_btn_search_clicked();

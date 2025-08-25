@@ -50,9 +50,11 @@ MainWindow::MainWindow(QWidget *parent)
     QShortcut *find_shortcut = new QShortcut(QKeySequence::Find, this);
     QShortcut *next_shortcut = new QShortcut(QKeySequence::FindNext, this);
     QShortcut *prev_shortcut = new QShortcut(QKeySequence::FindPrevious, this);
+    QShortcut *reset_shortcut = new QShortcut(QKeySequence(Qt::CTRL | Qt::Key_R), this);
     connect(find_shortcut, &QShortcut::activated, this, &MainWindow::open_search_window);
     connect(next_shortcut, &QShortcut::activated, this, &MainWindow::open_next_result);
     connect(prev_shortcut, &QShortcut::activated, this, &MainWindow::open_prev_result);
+    connect(reset_shortcut, &QShortcut::activated, this, &MainWindow::reset_shortcut_search);
 
     connect(ui->tabWidget, &QTabWidget::currentChanged,
             this, [this](int index){
@@ -365,7 +367,20 @@ void MainWindow::export_specific() {
 }
 
 void MainWindow::open_search_window() {
-    qDebug() << "STRG+F gedrückt";
+    int index = ui->tabWidget->currentIndex();
+    QWidget* tab = ui->tabWidget->widget(index);
+    QTableWidget* table = tab->findChild<QTableWidget*>();
+    if (!table) return;
+
+    QString search_phrase;
+    CustomDialog dialog("Enter Searchphrase: ", this);
+    if (dialog.exec() == QDialog::Accepted) {
+        search_phrase = dialog.selected_option();
+    }
+
+    if (search_phrase.isEmpty()) return;
+    m_search_controller->shortcut_search(table, search_phrase);
+
 }
 
 void MainWindow::open_next_result() {
@@ -404,4 +419,13 @@ void MainWindow::open_prev_result() {
             break;
         }
     }
+}
+
+void MainWindow::reset_shortcut_search() {
+    int index = ui->tabWidget->currentIndex();
+    QWidget* tab = ui->tabWidget->widget(index);
+    QTableWidget* table = tab->findChild<QTableWidget*>();
+    if (!table) return;
+
+    m_search_controller->reset_search_controller();
 }

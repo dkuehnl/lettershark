@@ -1,4 +1,5 @@
 #include "customdialog.h"
+#include <qlineedit.h>
 
 namespace {
 const static QString dialogstyle = R"(
@@ -55,7 +56,7 @@ const static QString dialogstyle = R"(
     )";
 }
 
-CustomDialog::CustomDialog(const QStringList& options, QWidget* parent = nullptr)
+CustomDialog::CustomDialog(const QStringList& options, QWidget* parent)
     : QDialog(parent) {
     setWindowTitle("Select Exportfile");
 
@@ -78,6 +79,36 @@ CustomDialog::CustomDialog(const QStringList& options, QWidget* parent = nullptr
     this->setStyleSheet(dialogstyle);
 }
 
+CustomDialog::CustomDialog(const QString& placeholder, QWidget* parent)
+    : QDialog(parent), m_mode(Mode::LineEdit)
+{
+    setWindowTitle("Enter Search-Phrase");
+
+    QVBoxLayout* layout = new QVBoxLayout(this);
+
+    QLabel* label = new QLabel("Please enter a value:" , this);
+    label->setObjectName("dialog_label");
+    label->setAlignment(Qt::AlignCenter);
+    layout->addWidget(label);
+
+    m_line_edit = new QLineEdit(this);
+    m_line_edit->setObjectName("dialog_line");
+    m_line_edit->setPlaceholderText(placeholder);
+    layout->addWidget(m_line_edit);
+    layout->setAlignment(m_line_edit, Qt::AlignCenter);
+
+    QDialogButtonBox* button_box = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this);
+    connect(button_box, &QDialogButtonBox::accepted, this, &QDialog::accept);
+    connect(button_box, &QDialogButtonBox::rejected, this, &QDialog::reject);
+    layout->addWidget(button_box);
+
+    this->setStyleSheet(dialogstyle);
+}
+
 QString CustomDialog::selected_option() const {
-    return m_combo_box->currentText();
+    if (m_mode == Mode::ComboBox && m_combo_box)
+        return m_combo_box->currentText();
+    else if (m_mode == Mode::LineEdit && m_line_edit)
+        return m_line_edit->text();
+    return QString();
 }
