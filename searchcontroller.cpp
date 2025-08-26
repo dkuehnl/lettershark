@@ -88,10 +88,10 @@ QString SearchController::specific_search(QWidget* page, const QString& search_t
     return result;
 }
 
-void SearchController::shortcut_search(QTableWidget* table, const QString& search_text) {
+void SearchController::shortcut_search(QTableWidget* table, const QString& search_text, const QColor& color) {
     auto items = table->findItems(search_text, Qt::MatchContains);
     SearchController::reset_background(table, false);
-    SearchController::set_background(table, items, QColor("#e3a563"));
+    SearchController::set_background(table, items, color);
 }
 
 void SearchController::set_background(QTableWidget* table, QList<QTableWidgetItem*> items, const QBrush& color) {

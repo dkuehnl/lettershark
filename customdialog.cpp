@@ -97,6 +97,18 @@ CustomDialog::CustomDialog(const QString& placeholder, QWidget* parent)
     layout->addWidget(m_line_edit);
     layout->setAlignment(m_line_edit, Qt::AlignCenter);
 
+    m_color_box = new QComboBox(this);
+    m_color_box->setObjectName("dialog_color_picker");
+    m_color_box->addItem("Red", QColor(Qt::red));
+    m_color_box->addItem("Green", QColor(Qt::green));
+    m_color_box->addItem("Blue", QColor(Qt::blue));
+    m_color_box->addItem("Yellow", QColor(Qt::yellow));
+    m_color_box->addItem("Orange", QColor(255,165,0));
+    m_color_box->addItem("Purple", QColor(128,0,128));
+
+    layout->addWidget(m_color_box);
+    layout->setAlignment(m_color_box, Qt::AlignCenter);
+
     QDialogButtonBox* button_box = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this);
     connect(button_box, &QDialogButtonBox::accepted, this, &QDialog::accept);
     connect(button_box, &QDialogButtonBox::rejected, this, &QDialog::reject);
@@ -108,7 +120,13 @@ CustomDialog::CustomDialog(const QString& placeholder, QWidget* parent)
 QString CustomDialog::selected_option() const {
     if (m_mode == Mode::ComboBox && m_combo_box)
         return m_combo_box->currentText();
-    else if (m_mode == Mode::LineEdit && m_line_edit)
-        return m_line_edit->text();
     return QString();
+}
+
+QPair<QString, QColor> CustomDialog::search_pair() const {
+    if (m_mode == Mode::LineEdit && m_line_edit && m_color_box) {
+        QColor col = m_color_box->currentData().value<QColor>();
+        return qMakePair(m_line_edit->text(), col);
+    }
+    return qMakePair(QString(), QColor());
 }

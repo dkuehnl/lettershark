@@ -385,13 +385,16 @@ void MainWindow::open_search_window() {
     if (!table) return;
 
     QString search_phrase;
+    QColor color;
     CustomDialog dialog("Enter Searchphrase: ", this);
     if (dialog.exec() == QDialog::Accepted) {
-        search_phrase = dialog.selected_option();
+        QPair<QString, QColor> result = dialog.search_pair();
+        search_phrase = result.first;
+        color = result.second;
     }
 
     if (search_phrase.isEmpty()) return;
-    m_search_controller->shortcut_search(table, search_phrase);
+    m_search_controller->shortcut_search(table, search_phrase, color);
 
 }
 
