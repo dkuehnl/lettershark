@@ -80,12 +80,24 @@ void MainWindow::add_tree_item_file(const FileTabInfo& info) {
     ui->tw_opened_files->addTopLevelItem(root);
 }
 
-void MainWindow::add_tree_item_folder(const QVector<FileTabInfo>& infos) {
-    for (const auto& info : infos) {
+void MainWindow::add_tree_item_folder(const QVector<FileTabInfo>& infos, QString root_folder) {
 
+    auto root_items = ui->tw_opened_files->findItems(root_folder, Qt::MatchExactly);
+    QTreeWidgetItem* folder_root = nullptr;
+
+    if (root_items.isEmpty()) {
+        folder_root = new QTreeWidgetItem(ui->tw_opened_files);
+        folder_root->setText(0, root_folder);
+        ui->tw_opened_files->addTopLevelItem(folder_root);
+    } else {
+        folder_root = root_items.first();
+    }
+
+    for (const auto& info : infos) {
         auto items = ui->tw_opened_files->findItems(info.root_folder, Qt::MatchRecursive);
+
         if (items.empty()) {
-            QTreeWidgetItem* root = new QTreeWidgetItem(ui->tw_opened_files);
+            QTreeWidgetItem* root = new QTreeWidgetItem(folder_root);
             root->setText(0, info.root_folder);
 
             QTreeWidgetItem* child = new QTreeWidgetItem(root);
@@ -330,6 +342,7 @@ void MainWindow::show_context_menu(const QPoint& pos) {
 }
 
 void MainWindow::parse_folder(QString folder) {
+    qDebug() << folder;
     const auto items = ui->tw_opened_files->findItems(folder, Qt::MatchRecursive);
     for (QTreeWidgetItem* root : items) {
         for (size_t i = 0; i < root->childCount(); i++) {

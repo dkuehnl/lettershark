@@ -26,7 +26,7 @@ public:
 
 signals:
     void file_added(const FileTabInfo&);
-    void folder_scanned(const QVector<FileTabInfo>&);
+    void folder_scanned(const QVector<FileTabInfo>&, QString);
 public slots:
     void open_file();
     void open_folder();

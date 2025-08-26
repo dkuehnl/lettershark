@@ -60,7 +60,7 @@ private slots:
     void on_chkb_global_search_checkStateChanged(Qt::CheckState state);
 
     void add_tree_item_file(const FileTabInfo& info);
-    void add_tree_item_folder(const QVector<FileTabInfo>& infos);
+    void add_tree_item_folder(const QVector<FileTabInfo>& infos, QString root_folder);
 
     void show_context_menu(const QPoint& pos);
 

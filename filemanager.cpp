@@ -4,6 +4,8 @@
 #include <QFileDialog>
 #include <QFileInfo>
 #include <QMessageBox>
+#include <QDirIterator>
+
 #include <archive.h>
 #include <archive_entry.h>
 
@@ -44,16 +46,24 @@ void FileManager::open_folder() {
     if (folder_path.isEmpty()) return;
 
     QVector<FileTabInfo> all_infos;
-    QDir dir(folder_path);
+    QDirIterator it(folder_path, QDir::Files, QDirIterator::Subdirectories);
 
-    QFileInfoList entries = dir.entryInfoList(QDir::NoDotAndDotDot | QDir::Files);
-    for (const QFileInfo& info : entries) {
-        FileTabInfo file_info = build_file_tab_info(info.absoluteFilePath(), info.fileName(), QFileInfo(folder_path).fileName());
+    while (it.hasNext()) {
+        QString file_path = it.next();
+        QFileInfo info(file_path);
+        QString folder_name = QDir(info.absolutePath()).dirName();
+
+        FileTabInfo file_info = build_file_tab_info(
+            info.absoluteFilePath(),
+            info.fileName(),
+            folder_name
+            );
 
         m_file_mapping.insert(file_info.filename, file_info);
         all_infos.push_back(file_info);
     }
-    emit folder_scanned(all_infos);
+
+    emit folder_scanned(all_infos, QDir(folder_path).dirName());
 }
 
 void FileManager::open_archive() {
@@ -69,7 +79,7 @@ void FileManager::open_archive() {
         m_file_mapping.insert(info.filename, info);
         all_infos.push_back(info);
     }
-    emit folder_scanned(all_infos);
+    emit folder_scanned(all_infos, QDir(tar_gz).dirName());
 }
 
 std::optional<std::reference_wrapper<FileTabInfo>> FileManager::get_entry(const QString& filename) {
