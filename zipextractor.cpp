@@ -126,7 +126,9 @@ QByteArray ZipExtractor::decomp_file(const QString& filepath) {
     struct archive* a = archive_read_new();
     archive_read_support_filter_gzip(a);
     archive_read_support_format_raw(a);
-    if (archive_read_open_filename(a, filepath.toUtf8().constData(), 10240) != ARCHIVE_OK) {
+
+    std::wstring wpath = filepath.toStdWString();
+    if (archive_read_open_filename_w(a, wpath.c_str(), 10240) != ARCHIVE_OK) {
         throw std::runtime_error(".gz-File couldn't be opened");
         return {};
     }

@@ -342,7 +342,6 @@ void MainWindow::show_context_menu(const QPoint& pos) {
 }
 
 void MainWindow::parse_folder(QString folder) {
-    qDebug() << folder;
     const auto items = ui->tw_opened_files->findItems(folder, Qt::MatchRecursive);
     for (QTreeWidgetItem* root : items) {
         for (size_t i = 0; i < root->childCount(); i++) {

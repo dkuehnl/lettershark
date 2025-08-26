@@ -2,7 +2,6 @@
 #include "zipextractor.h"
 #include "parser_exceptions.h"
 
-#include <iostream>
 #include <sstream>
 
 #include <QDebug>
@@ -19,13 +18,16 @@ Parser::Parser(QString filepath)
     }
 
     if (tmp_file.suffix() == "gz") {
+        qDebug() << "hier beginn";
         QByteArray decompressed_data;
         QBuffer buffer;
 
         if (filepath.contains(".tar.gz")) {
             decompressed_data = ZipExtractor::decomp_folder(filepath);
         } else {
+            qDebug() << "hier 2";
             decompressed_data = ZipExtractor::decomp_file(filepath);
+            qDebug() << "kommt hier raus";
         }
 
         buffer.setData(decompressed_data);
