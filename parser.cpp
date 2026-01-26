@@ -9,8 +9,8 @@
 #include <QFileInfo>
 #include <QBuffer>
 
-Parser::Parser(QString filepath)
-    : m_filepath(filepath) {
+Parser::Parser(QString filepath, bool vnmf_log)
+    : m_filepath(filepath), m_vnmf(vnmf_log) {
     QFileInfo tmp_file(filepath);
 
     if (tmp_file.suffix().toLower() != "log" && tmp_file.suffix().toLower() != "txt" && tmp_file.suffix().toLower() != "gz") {
@@ -18,16 +18,13 @@ Parser::Parser(QString filepath)
     }
 
     if (tmp_file.suffix() == "gz") {
-        qDebug() << "hier beginn";
         QByteArray decompressed_data;
         QBuffer buffer;
 
         if (filepath.contains(".tar.gz")) {
             decompressed_data = ZipExtractor::decomp_folder(filepath);
         } else {
-            qDebug() << "hier 2";
             decompressed_data = ZipExtractor::decomp_file(filepath);
-            qDebug() << "kommt hier raus";
         }
 
         buffer.setData(decompressed_data);
@@ -129,6 +126,11 @@ void Parser::parse_body(std::string message, TableRow& parsed_line) {
 
 TableRow Parser::parse_line(std::string line) {
     TableRow parsed_line;
+    if (m_vnmf) {
+        parse_vnmf(line, parsed_line);
+        return parsed_line;
+    }
+
     auto [tag_size, end_pos] = Parser::parse_tags(line, parsed_line);
     if (tag_size == 0) {
         parsed_line.cols[7] = line;
@@ -139,10 +141,51 @@ TableRow Parser::parse_line(std::string line) {
     return parsed_line;
 }
 
-unsigned int Parser::get_parsed_lines() {
-    return m_table.size();
-}
+void Parser::parse_vnmf(const std::string& line, TableRow& parsed_line) {
+    if (line.find('[') == std::string::npos || line.find('|') == std::string::npos) {
+        parsed_line.cols[8] = line;
+        return;
+    }
 
-std::vector<TableRow> Parser::get_parsed_data() {
-    return m_table;
+    size_t pos = 0;
+    size_t col = 0;
+
+    while (pos < line.size() && col < 8) {
+        //Skip Whitespace and |-Separetor
+        while (pos < line.size() && std::isspace(line[pos])) {
+            pos++;
+        }
+        if (pos < line.size() && line[pos] == '|') {
+            pos++;
+        }
+        if (pos < line.size() && std::isspace(line[pos])) {
+            pos++;
+        }
+        if (pos >= line.size()) {
+            qDebug() << pos;
+            break;
+        }
+
+
+        if (line[pos] == '[') {
+            size_t end = line.find(']', pos);
+            if (end == std::string::npos) {
+                break;
+            }
+
+            parsed_line.cols[col++] = line.substr(pos + 1, end - pos - 1);
+            pos = end + 1;
+        } else {
+            size_t end = line.find('|', pos);
+            parsed_line.cols[col++] = line.substr(pos, end - pos);
+            pos = (end == std::string::npos) ? line.size() : end;
+        }
+    }
+
+    while (pos < line.size() && (line[pos] == '|' || std::isspace(line[pos]))) {
+        ++pos;
+    }
+
+    parsed_line.cols[8] = (pos < line.size()) ? line.substr(pos) : "";
+
 }

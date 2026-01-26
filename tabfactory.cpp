@@ -4,7 +4,7 @@
 #include <qheaderview.h>
 #include <qmenu.h>
 
-TabFactory::TabInfo TabFactory::create_tab(const QString& title, QComboBox* combo, QTabWidget* tabs) {
+TabFactory::TabInfo TabFactory::create_tab(const QString& title, QComboBox* combo, QTabWidget* tabs, bool vnmf_mode) {
     QWidget* tab_page = new QWidget();
     QVBoxLayout* layout = new QVBoxLayout(tab_page);
     layout->setContentsMargins(0,0,0,0);
@@ -17,7 +17,11 @@ TabFactory::TabInfo TabFactory::create_tab(const QString& title, QComboBox* comb
     tabs->addTab(tab_page, title);
     combo->addItem(title);
 
-    TabFactory::setup_default_headers(table);
+    if (vnmf_mode) {
+        TabFactory::setup_vnmf_headers(table);
+    } else {
+        TabFactory::setup_default_headers(table);
+    }
     TabFactory::apply_default_table_style(table);
     return {tab_page, table};
 }
@@ -94,7 +98,34 @@ void TabFactory::apply_default_table_style(QTableWidget* table) {
 
 void TabFactory::setup_default_headers(QTableWidget* table) {
     table->setColumnCount(8);
-    table->setHorizontalHeaderLabels(QStringList() << "Timestamp" << "Log-Level" << "Tag" << "PID" << "ID" << "Module" << "Function" << "Message");
+    table->setHorizontalHeaderLabels(
+        QStringList() << "Timestamp"
+                      << "Log-Level"
+                      << "Tag"
+                      << "PID"
+                      << "ID"
+                      << "Module"
+                      << "Function"
+                      << "Message");
+
+    QFont header_font = table->horizontalHeader()->font();
+    header_font.setBold(true);
+    table->horizontalHeader()->setFont(header_font);
+}
+
+void TabFactory::setup_vnmf_headers(QTableWidget* table) {
+    table->setColumnCount(9);
+    table->setHorizontalHeaderLabels(
+        QStringList() << "Timestamp 1"
+                      << "Timestamp 2"
+                      << "Log-Level"
+                      << "PID"
+                      << "Function"
+                      << "Module"
+                      << "Prozess"
+                      << "Number"
+                      << "Message");
+
     QFont header_font = table->horizontalHeader()->font();
     header_font.setBold(true);
     table->horizontalHeader()->setFont(header_font);

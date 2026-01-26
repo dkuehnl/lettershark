@@ -281,19 +281,19 @@ void MainWindow::add_new_tab(QString filename, bool is_folder) {
         }
 
         try {
-            Parser parser(entry.filepath);
+            ui->lbl_parsing_status->setText("Parsing...");
+
+            Parser parser(entry.filepath, ui->cb_vnfm_logs->isChecked());
             m_parsed_files++;
             m_parsed_lines += parser.get_parsed_lines();
             ui->lbl_parsed_lines->setText(QString::number(m_parsed_lines));
             ui->lbl_parsed_files->setText(QString::number(m_parsed_files));
 
-            auto page = TabFactory::create_tab(filename, ui->cb_search_column, ui->tabWidget);
+            auto page = TabFactory::create_tab(filename, ui->cb_search_column, ui->tabWidget, ui->cb_vnfm_logs->isChecked());
             entry.page = page.container;
 
-            ui->lbl_parsing_status->setText("Parsing...");
             ui->lbl_parsing_status->setText("Building Table...");
-            std::vector<TableRow> data = parser.get_parsed_data();
-            TabFactory::fill_table(page.table, data);
+            TabFactory::fill_table(page.table, parser.get_parsed_data());
 
             QTableWidget* table = page.table;
             table->setContextMenuPolicy(Qt::CustomContextMenu);

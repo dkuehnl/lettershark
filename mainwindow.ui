@@ -611,6 +611,19 @@ QTreeWidget::item:hover {
        <bool>true</bool>
       </property>
      </widget>
+     <widget class="QCheckBox" name="cb_vnfm_logs">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>20</y>
+        <width>121</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Parse VNMF-Logs</string>
+      </property>
+     </widget>
     </widget>
    </widget>
   </widget>
